@@ -15,21 +15,21 @@ gs_controls-no_dialog = abap_true.
 gs_controls-preview   = abap_true.
 gs_output_opt-tddest = 'LP01'.
 
-"Program for Reading , Updating , Inserting & Deleting data from a table
 
-TABLES: ZCALISAN_TABLOSU. "Employee Table
-DATA: lt_itab   TYPE TABLE OF ZCALISAN_TABLOSU,  "Internal table for employee basic details table
-      lwa_emp   TYPE ZCALISAN_TABLOSU, "Workarea for employee basic details table
-      lt_itab1  TYPE TABLE OF ZCALISAN_ADRES, "Internal table for employee address details table
-      lwa_emp1  TYPE ZCALISAN_ADRES, "Workarea for employee address details table
-      lt_itab2  TYPE TABLE OF ZCALISAN_MAAS,  "Internal table for employee salary details table
-      lwa_emp2  TYPE ZCALISAN_MAAS, "Workarea for employee salary details table
-      toplam_maas TYPE ZCAL_MAAS, "total salary
-      vergi       TYPE ZCAL_MAAS, "total vergi
-      c         TYPE ZCAL_MAAS, "vergi percentage
-      mevcut    TYPE ZCAL_MAAS. "mevcut salary
+
+TABLES: ZCALISAN_TABLOSU. "Çalışan Tablosu
+DATA: lt_itab   TYPE TABLE OF ZCALISAN_TABLOSU,  "Çalışan detayları için oluşturulmuş bir internal tablo
+      lwa_emp   TYPE ZCALISAN_TABLOSU, "Çalışan detayları için oluşturulmuş bir workarea
+      lt_itab1  TYPE TABLE OF ZCALISAN_ADRES, "Adres detayları için oluşturulmuş bir internal tablo
+      lwa_emp1  TYPE ZCALISAN_ADRES, "Adres detayları için oluşturulmuş bir workarea
+      lt_itab2  TYPE TABLE OF ZCALISAN_MAAS,  "Çalışan maaş detayları için oluşturulmuş bir internal tablo
+      lwa_emp2  TYPE ZCALISAN_MAAS, "Çalışan maaş detayları için oluşturulmuş bir internal tablo
+      toplam_maas TYPE ZCAL_MAAS, "toplam maaş
+      vergi       TYPE ZCAL_MAAS, "toplam vergi
+      c         TYPE ZCAL_MAAS, "vergi yüzdesi
+      mevcut    TYPE ZCAL_MAAS. "mevcut maaş
 PARAMETER: p_calid TYPE char8.
-SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME TITLE text-101. "selection screen block
+SELECTION-SCREEN BEGIN OF BLOCK blk1 WITH FRAME TITLE text-101. "selection screen bloğu
 PARAMETERS:p_rad1 RADIOBUTTON GROUP rg1 USER-COMMAND flag DEFAULT 'X',
            p_rad2 RADIOBUTTON GROUP rg1,
            p_rad3 RADIOBUTTON GROUP rg1,
@@ -39,14 +39,14 @@ SELECTION-SCREEN END OF BLOCK blk1.
 
 
 PARAMETERS:
-  p_calad TYPE char20 MODIF ID pa1, "parameter for first name
-  p_calsd TYPE char20 MODIF ID pa2, "parameter for last name
-  p_sehir  TYPE char20 MODIF ID pa3, "parameter for city name
+  p_calad TYPE char20 MODIF ID pa1, "çalışan adı için parametre
+  p_calsd TYPE char20 MODIF ID pa2, "çalışan soy adı için parametre
+  p_sehir  TYPE char20 MODIF ID pa3, "şehir ismi için
   p_a_mas  TYPE char20 MODIF ID pa4.
 
 AT SELECTION-SCREEN OUTPUT.
   LOOP AT SCREEN.
-    CASE screen-group1. "selecion of parameters on the basis of radiobutton selection
+    CASE screen-group1. "parametreler için radiobutton seçimleri
       WHEN 'PA1'.
         IF p_rad1 = 'X'.
           screen-active = '0'.
@@ -120,8 +120,8 @@ AT SELECTION-SCREEN OUTPUT.
 
   ENDLOOP.
 
-AT SELECTION-SCREEN ON RADIOBUTTON GROUP rg1. "Auto-Popullating data in parameters
-  IF p_rad3 EQ 'X'. "if update radio button is selected
+AT SELECTION-SCREEN ON RADIOBUTTON GROUP rg1.
+  IF p_rad3 EQ 'X'. "Update radio button seçili ise
     SELECT  CAL_ADI CAL_SOYADI
          FROM ZCALISAN_TABLOSU
          INTO CORRESPONDING FIELDS OF TABLE lt_itab
@@ -134,7 +134,7 @@ AT SELECTION-SCREEN ON RADIOBUTTON GROUP rg1. "Auto-Popullating data in paramete
     ENDIF.
   ENDIF.
 START-OF-SELECTION.
-  IF p_rad3 EQ 'X'. "Updating data
+  IF p_rad3 EQ 'X'. "veri güncelleme
     SELECT *
          FROM ZCALISAN_TABLOSU
          INTO TABLE lt_itab
@@ -151,14 +151,14 @@ START-OF-SELECTION.
     ENDIF.
     EXIT.
   ENDIF.
-  IF p_rad1 EQ 'X'. "Displaying Data
+  IF p_rad1 EQ 'X'. "veri gösterme
     SELECT *
       FROM ZCALISAN_TABLOSU
       INTO TABLE lt_itab
       WHERE CAL_ID = p_calid.
     IF sy-subrc = 0 .
       LOOP AT lt_itab INTO lwa_emp.
-        FORMAT COLOR 1 INTENSIFIED ON. "adding dark color to headings
+        FORMAT COLOR 1 INTENSIFIED ON. "başlıklara koyu renk ekleme
         WRITE: /3 'Calisan ID',
                 20 'Adi',
                 35 'Soy Adi',
@@ -168,7 +168,7 @@ START-OF-SELECTION.
                 130  'Olusturan',
                 150  'Olusturma Tarihi'.
         ULINE. " FOR UNDERLINE
-        FORMAT COLOR 2 INTENSIFIED ON. "adding dark color to fields
+        FORMAT COLOR 2 INTENSIFIED ON. "alanlara koyu renk ekleme
         WRITE:/3 lwa_emp-CAL_ID, 20 lwa_emp-CAL_ADI,35 lwa_emp-CAL_SOYADI,70 lwa_emp-DOGUM_TARIHI,90 lwa_emp-CINSIYET,110 lwa_emp-MEDENI_HAL,
         130 lwa_emp-OLUSTURAN,150 lwa_emp-OLUST_TARIHI.
       ENDLOOP.
@@ -178,7 +178,7 @@ START-OF-SELECTION.
      INTO TABLE lt_itab1
      WHERE CAL_ID = p_calid.
       LOOP AT lt_itab1 INTO lwa_emp1.
-        FORMAT COLOR 1 INTENSIFIED ON. "adding dark color to headings
+        FORMAT COLOR 1 INTENSIFIED ON. "başlıklara koyu renk ekleme
         WRITE: /3 'Calisan ID',
                 20 'Daire No',
                 35 'Sokak Adi',
@@ -186,7 +186,7 @@ START-OF-SELECTION.
                 90  'Ilce',
                 110  'Posta Kodu'.
         ULINE. " FOR UNDERLINE
-        FORMAT COLOR 2 INTENSIFIED ON. "adding dark color to fields
+        FORMAT COLOR 2 INTENSIFIED ON. "alanlara koyu renk ekleme
         WRITE:/3 lwa_emp1-CAL_ID, 20 lwa_emp1-DAIRE_NO, 35 lwa_emp1-SOKAK_ADI,70 lwa_emp1-SEHIR,90 lwa_emp1-ILCE,110 lwa_emp1-POSTA_KODU.
       ENDLOOP.
       ULINE.
@@ -195,7 +195,7 @@ START-OF-SELECTION.
       INTO TABLE lt_itab2
       WHERE CAL_ID = p_calid.
       LOOP AT lt_itab2 INTO lwa_emp2.
-        FORMAT COLOR 1 INTENSIFIED ON. "adding dark color to headings
+        FORMAT COLOR 1 INTENSIFIED ON. "başlıklara koyu renk ekleme
         WRITE: /3 'Calisan ID',
                 35 'Ay',
                 70  'Maas Tarihi',
@@ -205,30 +205,30 @@ START-OF-SELECTION.
                 190  'Saglik',
                 210  'Diger'.
         ULINE. " FOR UNDERLINE
-        FORMAT COLOR 2 INTENSIFIED ON. "adding dark color to fields
+        FORMAT COLOR 2 INTENSIFIED ON. "alanlara koyu renk ekleme
 
         WRITE:/3 lwa_emp2-CAL_ID,35 lwa_emp2-AY,70 lwa_emp2-MAAS_GUNU,90 lwa_emp2-AZAMI_MAAS,110 lwa_emp2-YEMEK_KARTI,130 lwa_emp2-ULASIM,
         190 lwa_emp2-SAGLIK,210 lwa_emp2-DIGER.
       ENDLOOP.
       ULINE.
-      toplam_maas = lwa_emp2-AZAMI_MAAS + lwa_emp2-YEMEK_KARTI + lwa_emp2-ULASIM + lwa_emp2-SAGLIK + lwa_emp2-DIGER. "total salary calculated
+      toplam_maas = lwa_emp2-AZAMI_MAAS + lwa_emp2-YEMEK_KARTI + lwa_emp2-ULASIM + lwa_emp2-SAGLIK + lwa_emp2-DIGER. "hesaplanan toplam maaş
       WRITE:/ 'Toplam Maas = ', toplam_maas.
       IF toplam_maas < 1000.
         WRITE: 'Vergiye tabii degil!'.
       ELSEIF ( 1000 < toplam_maas AND toplam_maas < 30000 ).
         c = 30 / 100.
-        vergi = c * toplam_maas. "total vergi calculated when 10000< total salary <35000
+        vergi = c * toplam_maas. " toplam_maas 1000-30000 arası oldugunda toplam vergi
         WRITE : / 'vergi = ', vergi.
       ELSEIF ( 30000 < toplam_maas AND toplam_maas <  50000 ).
         c = 60 / 100.
-        vergi = c * toplam_maas. "total vergi calculated when 30000 < total salary <50000
+        vergi = c * toplam_maas. " toplam_maas 30000-50000 arası oldugunda toplam vergi
         WRITE : / 'vergi = ', vergi.
       ELSEIF toplam_maas > 50000.
         c = 90 / 100.
-        vergi = c * toplam_maas. "total vergi calculated when total salary >50000
+        vergi = c * toplam_maas. " toplam_maas 50000'den fazla oldugunda toplam vergi
         WRITE : / 'vergi = ', vergi.
       ENDIF.
-      mevcut = toplam_maas - vergi. "mevcut salary
+      mevcut = toplam_maas - vergi. "mevcut maaş
       WRITE : / 'mevcut Salary' , mevcut.
     ELSEIF sy-subrc <> 0 .
       MESSAGE 'Wrong Employee ID1' TYPE 'E'.
@@ -236,7 +236,7 @@ START-OF-SELECTION.
     ENDIF.
   ENDIF.
 
-  IF p_rad2 EQ 'X'. "Inserting Data
+  IF p_rad2 EQ 'X'. "Veri aktarma
     lwa_emp2-CAL_ID = p_calid.
     lwa_emp-CAL_ADI = p_calad.
     lwa_emp-CAL_SOYADI = p_calsd.
@@ -254,7 +254,7 @@ START-OF-SELECTION.
     EXIT.
   ENDIF.
 
-  IF p_rad4 EQ 'X'. "Deleting Data
+  IF p_rad4 EQ 'X'. "Veri silme
     DELETE FROM ZCALISAN_TABLOSU WHERE CAL_ID = p_calid.
     IF sy-subrc = 0.
       MESSAGE 'Employee Record Deleted' TYPE 'I'.
