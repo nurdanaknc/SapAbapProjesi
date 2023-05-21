@@ -62,7 +62,8 @@ SELECT * FROM ZCALISAN_MAAS
   INTO TABLE gt_maas.
 
 
-GV_sAYAC = 0.```
+GV_sAYAC = 0.
+```
 Initialization kısmında ise uygulama çalıştığında tanımlanması gereken değişkenler veya tablolar tanımlanır.
 
 # Uygulama Arayüzü
